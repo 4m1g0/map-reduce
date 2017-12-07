@@ -3,9 +3,9 @@
 from operator import itemgetter #No lo esta usando
 import sys
 
+current_measure = None
 current_city = None
-current_max = -9999.0
-current_min = 9999.0
+current_temp = None
 city = None
 
 # input comes from STDIN
@@ -14,36 +14,31 @@ for line in sys.stdin:
     line = line.strip()
 
     # parse the input we got from mapper.py
-    city, tmax, tmin  = line.split('\t', 2)
+    measure, city, temp  = line.split('\t', 2)
 
     # convert count (currently a string) to int
     try:
-        tmax = float(tmax)
-        tmin = float(tmin)
+        temp = float(temp)
     except ValueError:
         # count was not a number, so silently
         # ignore/discard this line
         continue
-    
-    #discard nulls
-    if tmin == -9999.0:
-        tmin = 9999.0
 
     # this IF-switch only works because Hadoop sorts map output
     # by key (here: word) before it is passed to the reducer
-    if current_city == city:
-        if current_max < tmax:
-            current_max = tmax
-        if current_min > tmin:
-            current_min = tmin
+    if current_measure == measure:
+        if measure == 'min' and temp < current_temp:
+            current_temp = temp
+            current_city = city
+        elif temp > current_temp:
+            current_temp = temp
+            current_city = city
     else:
-        if current_city:
-            # write result to STDOUT
-            print '%s\t%s\t%s' % (current_city, current_max, current_min)
-        current_min = tmin
-        current_max = tmax
+        if current_measure:
+            print '%s:\t%s\t%s' % (current_measure, current_city, current_temp)
+        
+        current_measure = measure
+        current_temp = temp
         current_city = city
 
-# do not forget to output the last word if needed!
-if current_city == city:
-    print '%s\t%s\t%s' % (current_city, current_max, current_min)
+print '%s:\t%s\t%s' % (current_measure, current_city, current_temp)
