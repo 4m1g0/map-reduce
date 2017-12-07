@@ -27,9 +27,10 @@ for line in sys.stdin:
     # this IF-switch only works because Hadoop sorts map output
     # by key (here: word) before it is passed to the reducer
     if current_measure == measure:
-        if measure == 'min' and temp < current_temp:
-            current_temp = temp
-            current_city = city
+        if measure == 'min':
+            if temp < current_temp:
+                current_temp = temp
+                current_city = city
         elif temp > current_temp:
             current_temp = temp
             current_city = city
