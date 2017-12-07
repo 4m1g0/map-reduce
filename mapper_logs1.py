@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import os
 
 USER = 2
 URL = 3
@@ -12,9 +13,11 @@ for line in sys.stdin:
     # split the line into words
     tokens = line.split()
     
-    if ".jpg" in tokens[URL]:
+    if tokens[URL].endswith('.jpg"'):
         count = 1
     else:
         continue
-    
-    print '%s\t%s' % (tokens[USER], count)
+        
+    user = os.environ['map_input_file']
+    user = user[user.rfind('/')+1:].split('.')[0]
+    print '%s\t%s' % (user, count)
