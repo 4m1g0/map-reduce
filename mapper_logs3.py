@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
 import sys
-import os
 
-USER = 2
-URL = 3
+URL = 0
+VISITS = 1
+
+maxVisits = 0
+url = ''
 
 # input comes from STDIN (standard input)
 for line in sys.stdin:
@@ -13,11 +15,14 @@ for line in sys.stdin:
     # split the line into words
     tokens = line.split()
     
-    if tokens[URL].endswith('.jpg"'):
-        count = 1
-    else:
+    try:
+        visits = int(tokens[VISITS])
+    except ValueError:
         continue
-        
-    user = os.environ['map_input_file']
-    user = user[user.rfind('/')+1:].split('.')[0]
-    print '%s\t%s' % (user, count)
+    
+    
+    if visits > maxVisits:
+        maxVisits = visits
+        url = tokens[URL]
+    
+print 'max\t%s\t%s' % (url, maxVisits)
